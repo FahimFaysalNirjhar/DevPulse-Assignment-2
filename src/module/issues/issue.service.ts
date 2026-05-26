@@ -43,7 +43,22 @@ const getAllIssuesFromDB = async (queryData: any) => {
 
   const result = await pool.query(query, values);
 
-  return result.rows;
+  const issues = await Promise.all(
+    result.rows.map(async (issue) => {
+      const user = await pool.query(
+        `SELECT id, name, role FROM users WHERE id=$1`,
+        [issue.reporter_id],
+      );
+      const { reporter_id, ...rest } = issue;
+
+      return {
+        ...rest,
+        reporter: user.rows[0],
+      };
+    }),
+  );
+
+  return issues;
 };
 
 export const issueService = {
