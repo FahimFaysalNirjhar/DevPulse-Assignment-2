@@ -14,6 +14,39 @@ const createIssueInToDB = async (payload: IIssue) => {
   return result;
 };
 
+const getAllIssuesFromDB = async (queryData: any) => {
+  const { sort, type, status } = queryData;
+  let query = `SELECT * FROM issues`;
+
+  const values: string[] = [];
+  const conditions: string[] = [];
+
+  if (type) {
+    values.push(type);
+    conditions.push(`type=$${values.length}`);
+  }
+
+  if (status) {
+    values.push(status);
+    conditions.push(`status=$${values.length}`);
+  }
+
+  if (conditions.length > 0) {
+    query += ` WHERE ` + conditions.join(" AND ");
+  }
+
+  if (sort === "oldest") {
+    query += ` ORDER BY created_at ASC`;
+  } else {
+    query += ` ORDER BY created_at DESC`;
+  }
+
+  const result = await pool.query(query, values);
+
+  return result.rows;
+};
+
 export const issueService = {
   createIssueInToDB,
+  getAllIssuesFromDB,
 };
