@@ -66,7 +66,7 @@ const auth = (...roles: ROLES[]) => {
       }
 
       req.user = decoded;
-      console.log(req.user);
+      // console.log(req.user);
       next();
     } catch (error) {
       next(error);
