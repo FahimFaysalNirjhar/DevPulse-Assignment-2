@@ -41,9 +41,11 @@ const loginUserIntoDB = async (payload: {
 
   delete user.password;
 
+  const token = accessToken;
+
   return {
-    token: accessToken,
-    user,
+    token,
+    user: user,
   };
 };
 

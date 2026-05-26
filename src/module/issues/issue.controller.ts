@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { issueService } from "./issue.service";
 import { truncates } from "bcryptjs";
+import sendResponse from "../../utility/sendResponse";
 
 const createIssue = async (req: Request, res: Response) => {
   console.log(req.body);
@@ -12,14 +13,28 @@ const createIssue = async (req: Request, res: Response) => {
       reporter_id,
     });
 
-    res.status(201).json({
+    // res.status(201).json({
+    //   success: true,
+    //   message: "Issue created successfully",
+    //   data: result.rows[0],
+    // });
+
+    sendResponse(res, {
+      statuscode: 201,
       success: true,
       message: "Issue created successfully",
       data: result.rows[0],
     });
   } catch (error: any) {
     const statusCode = error.statusCode ?? error.httpStatus ?? 500;
-    res.status(statusCode).json({
+    // res.status(statusCode).json({
+    //   success: false,
+    //   message: error.message,
+    //   error: error,
+    // });
+
+    sendResponse(res, {
+      statuscode: statusCode,
       success: false,
       message: error.message,
       error: error,
@@ -31,14 +46,27 @@ const getAllIssues = async (req: Request, res: Response) => {
   try {
     const result = await issueService.getAllIssuesFromDB(req.query);
 
-    res.status(200).json({
+    // res.status(200).json({
+    //   success: true,
+    //   message: "Issues retrieved successfully",
+    //   data: result,
+    // });
+
+    sendResponse(res, {
+      statuscode: 200,
       success: true,
       message: "Issues retrieved successfully",
       data: result,
     });
   } catch (error: any) {
     const statusCode = error.statusCode ?? error.httpStatus ?? 500;
-    res.status(statusCode).json({
+    // res.status(statusCode).json({
+    //   success: false,
+    //   message: error.message,
+    //   error: error,
+    // });
+    sendResponse(res, {
+      statuscode: statusCode,
       success: false,
       message: error.message,
       error: error,
@@ -50,14 +78,27 @@ const getSingleIssue = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
     const result = await issueService.getSingleIssueFromDB(id as string);
-    res.status(200).json({
+    // res.status(200).json({
+    //   success: true,
+    //   message: "Issue retrieved successfully",
+    //   data: result,
+    // });
+
+    sendResponse(res, {
+      statuscode: 200,
       success: true,
       message: "Issue retrieved successfully",
       data: result,
     });
   } catch (error: any) {
     const statusCode = error.statusCode ?? error.httpStatus ?? 500;
-    res.status(statusCode).json({
+    // res.status(statusCode).json({
+    //   success: false,
+    //   message: error.message,
+    //   error: error,
+    // });
+    sendResponse(res, {
+      statuscode: statusCode,
       success: false,
       message: error.message,
       error: error,
@@ -78,14 +119,28 @@ const updateIssue = async (req: Request, res: Response) => {
       id as string,
       user,
     );
-    res.status(200).json({
+    // res.status(200).json({
+    //   success: true,
+    //   message: "Issue updated successfully",
+    //   data: result,
+    // });
+
+    sendResponse(res, {
+      statuscode: 200,
       success: true,
       message: "Issue updated successfully",
       data: result,
     });
   } catch (error: any) {
     const statusCode = error.statusCode ?? error.httpStatus ?? 500;
-    res.status(statusCode).json({
+    // res.status(statusCode).json({
+    //   success: false,
+    //   message: error.message,
+    //   error: error,
+    // });
+
+    sendResponse(res, {
+      statuscode: statusCode,
       success: false,
       message: error.message,
       error: error,
@@ -106,13 +161,26 @@ const deleteIssue = async (req: Request, res: Response) => {
       });
     }
 
-    res.status(200).json({
+    // res.status(200).json({
+    //   success: true,
+    //   message: "Issue deleted successfully",
+    // });
+
+    sendResponse(res, {
+      statuscode: 200,
       success: true,
       message: "Issue deleted successfully",
     });
   } catch (error: any) {
     const statusCode = error.statusCode ?? error.httpStatus ?? 500;
-    res.status(statusCode).json({
+    // res.status(statusCode).json({
+    //   success: false,
+    //   message: error.message,
+    //   error: error,
+    // });
+
+    sendResponse(res, {
+      statuscode: statusCode,
       success: false,
       message: error.message,
       error: error,
