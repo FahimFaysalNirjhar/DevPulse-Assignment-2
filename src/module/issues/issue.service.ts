@@ -86,8 +86,55 @@ const getSingleIssueFromDB = async (id: string) => {
   };
 };
 
+const updateIssueInDB = async (
+  payload: IIssue,
+  id: string,
+  user: {
+    id: number;
+    role: string;
+  },
+) => {
+  const issueResult = await pool.query(
+    `
+    SELECT * FROM issues WHERE id=$1
+    `,
+    [id],
+  );
+
+  const issue = issueResult.rows[0];
+
+  const isMaintainer = user.role === "maintainer";
+
+  const isOwnIssue = user.id === issue.reporter_id;
+
+  const isOpen = issue.status === "open";
+
+  if (!isMaintainer) {
+    if (!isOwnIssue) {
+      throw new Error("Access denied. You can only update your own issues.");
+    }
+    if (!isOpen) {
+      throw new Error(
+        "Access denied. You can only update issues that are open.",
+      );
+    }
+  }
+
+  const { title, description, type } = payload;
+
+  const result = await pool.query(
+    `
+    UPDATE issues SET title=COALESCE($1,title), description=COALESCE($2,description), type=COALESCE($3,type) WHERE id=$4 RETURNING *
+    `,
+    [title, description, type, id],
+  );
+
+  return result.rows[0];
+};
+
 export const issueService = {
   createIssueInToDB,
   getAllIssuesFromDB,
   getSingleIssueFromDB,
+  updateIssueInDB,
 };
